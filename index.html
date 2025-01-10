@@ -1,10 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Welcome to My GitHub Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Page with Iframe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        iframe {
+            width: 80%;
+            height: 80%;
+            border: 2px solid #333;
+            border-radius: 8px;
+            display: none; /* Hidden until script loads */
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is my free GitHub Pages website.</p>
+    <h1>Parent Page</h1>
+    <iframe id="iframeElement" title="Embedded Page"></iframe>
+
+    <script>
+        // Function to dynamically load the JavaScript file
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = callback; // Trigger callback once script is loaded
+            script.onerror = () => console.error(`Failed to load script: ${src}`);
+            document.head.appendChild(script);
+        }
+
+        // Load the JavaScript file before displaying the iframe
+        loadScript('https://chase-var.hostedpaymentservice.net/includes/hpfParent.min.js', () => {
+            console.log("Script loaded successfully. Now loading iframe...");
+
+            window.postMessage("init",ev => {
+                console.log(ev);
+            })
+            // Once script is loaded, set iframe source and make it visible
+            const iframe = document.getElementById('iframeElement');
+            iframe.src = "https://chase-var.hostedpaymentservice.net/hpf/?uid=EK5XBFD1KRFJEJFYUK7LEJCAFIPWRMAI"; // Replace with the iframe content URL
+            iframe.style.display = 'block'; // Show the iframe
+        });
+    </script>
 </body>
 </html>
