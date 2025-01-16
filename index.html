@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,15 +17,18 @@
             height: 100vh;
             background-color: #f4f4f9;
         }
+
         iframe {
             width: 80%;
             height: 80%;
             border: 2px solid #333;
             border-radius: 8px;
-            display: none; /* Hidden until script loads */
+            display: none;
+            /* Hidden until script loads */
         }
     </style>
 </head>
+
 <body>
     <h1>Parent Page</h1>
     <iframe id="iframeElement" title="Embedded Page"></iframe>
@@ -43,14 +47,19 @@
         loadScript('https://chase-var.hostedpaymentservice.net/includes/hpfParent.min.js', () => {
             console.log("Script loaded successfully. Now loading iframe...");
 
-            window.postMessage("init",ev => {
-                console.log(ev);
-            })
+
             // Once script is loaded, set iframe source and make it visible
             const iframe = document.getElementById('iframeElement');
-            iframe.src = "https://chase-var.hostedpaymentservice.net/hpf/?uid=F2BH4NYWZP7PB8PWQGZNU7J5H0P4QODQ"; // Replace with the iframe content URL
+            iframe.src = "https://chase-var.hostedpaymentservice.net/hpf?uid=3PY56LZ3NKGO6CZVXSACB4V8506FA96G"; // Replace with the iframe content URL
             iframe.style.display = 'block'; // Show the iframe
+
+
         });
+
+        function hpfReady() {
+            console.log("HPF Form finished loading.");
+        }
     </script>
 </body>
+
 </html>
