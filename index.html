@@ -50,7 +50,7 @@
 
             // Once script is loaded, set iframe source and make it visible
             const iframe = document.getElementById('iframeElement');
-            iframe.src = "https://chase-var.hostedpaymentservice.net/hpf?uid=58POTVRZG8BGEMACWUTC05DYBOYXGWZ0"; // Replace with the iframe content URL
+            iframe.src = "https://chase-var.hostedpaymentservice.net/hpf?uid=4E2RU988KHZ73ENSKVX0K3YPMYIO1V2W"; // Replace with the iframe content URL
             iframe.style.display = 'block'; // Show the iframe
 
 
@@ -58,6 +58,43 @@
 
         function hpfReady() {
             console.log("HPF Form finished loading.");
+        }
+
+        function completePayment(data) {
+            alert("postMessage function completePayment is called. \n Response:" + Object.values(data));
+            alert(data.uID);
+        }
+
+        function fetchData() {
+            // Define the API endpoint
+            const apiUrl = "https://chase-var.hostedpaymentservice.net/api/query";
+
+            // Query parameters
+            const queryParams = {
+                userId: 1,
+                limit: 5
+            };
+
+            // Construct the full URL with query parameters
+            const url = new URL(apiUrl);
+            Object.keys(queryParams).forEach(key => url.searchParams.append(key, queryParams[key]));
+
+            // Perform the GET request
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update the HTML content with the fetched data
+                    document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.getElementById("output").textContent = "Error fetching data.";
+                });
         }
     </script>
 </body>
