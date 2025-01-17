@@ -27,14 +27,20 @@
             /* Hidden until script loads */
         }
     </style>
+    <script src="https://chase-var.hostedpaymentservice.net/includes/hpfParent.min.js"></script>
 </head>
 
 <body>
     <h1>Parent Page</h1>
     <iframe id="iframeElement" title="Embedded Page"></iframe>
+    <!-- Textboxes for two query parameters -->
+    <input type="text" id="secureid" placeholder="secureid" />
+    <input type="text" id="key" placeholder="key" />
+    <pre id="output" style="background: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></pre>
+    <button onclick="fetchData()">Add card</button>
 
     <script>
-        // Function to dynamically load the JavaScript file
+        /* // Function to dynamically load the JavaScript file
         function loadScript(src, callback) {
             const script = document.createElement('script');
             script.src = src;
@@ -46,41 +52,36 @@
         // Load the JavaScript file before displaying the iframe
         loadScript('https://chase-var.hostedpaymentservice.net/includes/hpfParent.min.js', () => {
             console.log("Script loaded successfully. Now loading iframe...");
-
-
             // Once script is loaded, set iframe source and make it visible
             const iframe = document.getElementById('iframeElement');
-            iframe.src = "https://chase-var.hostedpaymentservice.net/hpf?uid=WRU8NBVF1S3N36NVHQ1I7JHMOUO3B9IC"; // Replace with the iframe content URL
             iframe.style.display = 'block'; // Show the iframe
-
-
-        });
-
-        function hpfReady() {
-            console.log("HPF Form finished loading.");
-        }
-
-        function completePayment(data) {
-            alert("postMessage function completePayment is called. \n Response:" + Object.values(data));
-            alert(data.uID);
-        }
+        }); */
+        
 
         function fetchData() {
             // Define the API endpoint
-            const apiUrl = "https://chase-var.hostedpaymentservice.net/api/query";
+            const apiUrl = "http://localhost:3000/proxy-api/api/init";
+
+            // Get values from both textboxes
+            const secureid_parm = document.getElementById("secureid").value;
+            const key_parm = document.getElementById("key").value;
 
             // Query parameters
             const queryParams = {
-                userId: 1,
-                limit: 5
+                secure_id: secureid_parm,
+                api_key: key_parm,
+                txn_type: "profileAdd",
+                billing_name: "Jill+Holowach",
+                form_name: "default_cc"
             };
+
 
             // Construct the full URL with query parameters
             const url = new URL(apiUrl);
             Object.keys(queryParams).forEach(key => url.searchParams.append(key, queryParams[key]));
 
             // Perform the GET request
-            fetch(apiUrl)
+            fetch(url)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -90,11 +91,25 @@
                 .then(data => {
                     // Update the HTML content with the fetched data
                     document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+                    uid = data.uid;
+                    // Get the iframe element by ID and set its src
+                    const iframe = document.getElementById("iframeElement");
+                    iframe.src = `https://chase-var.hostedpaymentservice.net/hpf?uid=${uid}`; // Set the dynamically generated src
+                    iframe.style.display = 'block'; // Show the iframe
                 })
                 .catch(error => {
                     console.error("Error fetching data:", error);
                     document.getElementById("output").textContent = "Error fetching data.";
                 });
+        }
+
+        function hpfReady() {
+            console.log("HPF Form finished loading.");
+        }
+
+        function completePayment(data) {
+            alert("postMessage function completePayment is called. \n Response:" + Object.values(data));
+            alert(data.uID);
         }
     </script>
 </body>
